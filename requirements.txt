@@ -1,8 +1,0 @@
-discord.py
-langchain
-langchain_community
-langchain_aws
-boto3
-python-dotenv
-nest_asyncio
-sentence-transformers
