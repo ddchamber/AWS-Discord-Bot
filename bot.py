@@ -52,7 +52,7 @@ client = discord.Client(intents=intents)
 # Load embeddings & index map
 model = TitanEmbeddings(boto3_client=aws_client)
 
-embeddings = np.load("data/threads.db")  # shape: (N, 384), already normalized
+embeddings = np.load("models/embeddings.npy")  # shape: (N, 384), already normalized
 with open("models/id_map.txt") as f:
     id_map = f.read().splitlines()
 
