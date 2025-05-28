@@ -52,9 +52,19 @@ client = discord.Client(intents=intents)
 # Load embeddings & index map
 model = TitanEmbeddings(boto3_client=aws_client)
 
-embeddings = np.load("models/embeddings.npy")  # shape: (N, 384), already normalized
-with open("models/id_map.txt") as f:
-    id_map = f.read().splitlines()
+# Load thread IDs and contents from SQLite
+conn = sqlite3.connect("data/threads.db")
+cursor = conn.cursor()
+cursor.execute("SELECT id, content FROM threads")
+rows = cursor.fetchall()
+conn.close()
+
+# Separate into IDs and content
+id_map = [row[0] for row in rows]
+thread_texts = [row[1] for row in rows]
+
+# Dynamically generate Titan embeddings
+embeddings = np.array([generate_titan_vector_embedding(text) for text in thread_texts])
 
 conversation_history = []
 last_user_question = {"text": None}  # use a mutable dict so you can update it inside the event
