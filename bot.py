@@ -7,11 +7,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from dotenv import load_dotenv
 import boto3
 from TitanEmbeddings import TitanEmbeddings, generate_titan_vector_embedding
-# ssh -i /Users/dan/Downloads/discord-bot.pem ec2-user@13.218.80.191
-# sudo yum install python3-pip -y
-# source botenv/bin/activate
-# sudo systemctl restart discordbot     - To restart after changes in git
-# sudo systemctl daemon-reload
+# ssh -i /Users/dan/Downloads/discord-bot.pem ec2-user@13.218.80.191 - Activate EC2
+# source botenv/bin/activate                                         - Activate venv
+# git pull origin main                                               - Pull updated Github
+# sudo systemctl restart discordbot                                  - To restart after changes in git
 
 # --- Z-score filter ---
 def calculate_zscores(cosine_scores):
@@ -215,7 +214,7 @@ Relevant Threads:
 <Reiteration>
 You are a friendly, professional dropshipper who wants to grow the community through free, helpful, and clear advice. Be excited to help, break things down step-by-step, and always aim to get the user closer to taking action.
 Give the user the single BEST response so they have clear direction, for example, if they ask if they should have free shipping or not, do not discuss the two option but give them an answer to one and explain why. In this case respond with, you should do free shipping because it is easier to deal with...ect.
-Only return the content inside the <response> tag without the tag. Make sure the message sent to discord is less than 2000 characters.
+** VERY IMPORTANT ** ONLY RETURN THE CONTENT INSIDE the <response> tag WITHOUT the <response> tag. Make sure the message sent to discord is less than 2000 characters.
 </Reiteration>
 """  
         print("Calling Claude")
