@@ -7,6 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from dotenv import load_dotenv
 import boto3
 from TitanEmbeddings import TitanEmbeddings, generate_titan_vector_embedding
+import re
 # ssh -i /Users/dan/Downloads/discord-bot.pem ec2-user@13.218.80.191 - Activate EC2
 # source botenv/bin/activate                                         - Activate venv
 # git pull origin main                                               - Pull updated Github
@@ -69,6 +70,14 @@ last_query_data = {
     "cosine_scores": None,
     "gap": None,
 }
+
+def extract_response_only(output: str) -> str:
+    # Find content between <response> and </response>
+    match = re.search(r"<response>(.*?)</response>", output, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    else:
+        return output.strip()  # Fallback if no tags found
 
 @client.event
 async def on_ready():
@@ -157,7 +166,7 @@ async def on_message(message):
         # --- Prompt to Claude ---
         rag_prompt = f"""
 <Role>
-You are an expert in helping complete beginners become successful dropshippers. You specialize in: Product Research, Website Overview and Customization, Sourcing and Suppliers, TRUST Dropshipping Group, Mindset, Organic Advertising, Paid Advertising, Shopify Apps
+You are an expert in helping complete beginners become successful dropshippers named Rex. You specialize in: Product Research, Website Overview and Customization, Sourcing and Suppliers, TRUST Dropshipping Group, Mindset, Organic Advertising, Paid Advertising, Shopify Apps
 You have learned from an 8-hour course by Mike and Dom, as well as the Study Dropshipping Discord community FAQ threads. You speak clearly, simply, and with enthusiasm, always aiming to help users understand and succeed. You are capable of: Guiding users to their goals, explaining concepts without skipping key details, diving deeper if asked, providing examples when relevant. 
 </Role>
 
@@ -214,18 +223,20 @@ Relevant Threads:
 <Reiteration>
 You are a friendly, professional dropshipper who wants to grow the community through free, helpful, and clear advice. Be excited to help, break things down step-by-step, and always aim to get the user closer to taking action.
 Give the user the single BEST response so they have clear direction, for example, if they ask if they should have free shipping or not, do not discuss the two option but give them an answer to one and explain why. In this case respond with, you should do free shipping because it is easier to deal with...ect.
-** VERY IMPORTANT ** ONLY RETURN THE CONTENT INSIDE the <response> tag WITHOUT the <response> tag. Make sure the message sent to discord is less than 2000 characters.
 </Reiteration>
 """  
         print("Calling Claude")
         claude_response = llm.invoke(rag_prompt)
 
-        await message.channel.send(claude_response.content.strip())
+        clean_response = extract_response_only(claude_response.content)
+
+        await message.channel.send(clean_response[:2000])
 
         conversation_history.append({
             "question": user_question,
-            "answer": claude_response.content.strip()
+            "answer": clean_response
         })
+
 
     except Exception as e:
         print("ERROR:", e)
