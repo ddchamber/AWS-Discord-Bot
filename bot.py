@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import boto3
 from TitanEmbeddings import TitanEmbeddings, generate_titan_vector_embedding
 import re
+
 # ssh -i /Users/dan/Downloads/discord-bot.pem ec2-user@13.218.80.191 - Activate EC2
 # source botenv/bin/activate                                         - Activate venv
 # git pull origin main                                               - Pull updated Github
@@ -25,7 +26,7 @@ discord_token = os.getenv("DISCORD_TOKEN")
 aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
 aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 aws_region = os.getenv("AWS_DEFAULT_REGION")
-channel = 1375597403750797493
+channel = 1397292496794423458  # For Specific Channel 
 
 # --- AWS Claude Setup ---
 aws_client = boto3.client(
@@ -223,9 +224,9 @@ Next, think about how unique the product feels. If it's already everywhere, it'l
 It might take a few tries to land on the right one, but with research tools and inspiration from what's already working for others, you'll be able to spot the patterns.
 Want help brainstorming or validating a product you're thinking about?
 </response>
-
 </Examples>
 
+<Resources>
 <Conversation History>
 {formatted_conversation}
 </Conversation History>
@@ -237,7 +238,7 @@ A user just asked this question:
 Relevant Threads:
 {formatted_history}
 </User Question and Information from database>
-
+<\Resources>
 
 <Reiteration>
 You are a friendly, professional dropshipper who wants to grow the community through free, helpful, and clear advice. Be excited to help, break things down step-by-step, and always aim to get the user closer to taking action.
