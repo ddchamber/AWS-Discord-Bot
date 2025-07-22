@@ -30,10 +30,8 @@ channel = 1397292496794423458  # For Specific Channel
 
 # --- AWS Claude Setup ---
 aws_client = boto3.client(
-    "bedrock-runtime",
-    region_name=aws_region,
-    aws_access_key_id=aws_access_key,
-    aws_secret_access_key=aws_secret_key
+    service_name ="bedrock-runtime",
+    region_name='us-east-1'
 )
 
 model_id = "anthropic.claude-3-haiku-20240307-v1:0"
