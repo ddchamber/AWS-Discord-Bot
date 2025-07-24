@@ -8,6 +8,13 @@ from dotenv import load_dotenv
 import boto3
 from TitanEmbeddings import TitanEmbeddings, generate_titan_vector_embedding
 import re
+import logging
+import traceback
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)s %(name)s | %(message)s",
+)
 
 # ssh -i /Users/dan/Downloads/discord-bot.pem ec2-user@13.218.80.191 - Activate EC2
 # source botenv/bin/activate                                         - Activate venv
@@ -244,6 +251,9 @@ Give the user the single BEST response so they have clear direction, for example
 </Reiteration>
 """  
         print("Calling Claude")
+        # Debug: print caller identity
+        sts = boto3.client("sts", region_name=aws_region)
+        print("📋 Using AWS identity:", sts.get_caller_identity()["Arn"])
         claude_response = llm.invoke(rag_prompt)
 
         clean_response = extract_response_only(claude_response.content)
@@ -255,9 +265,10 @@ Give the user the single BEST response so they have clear direction, for example
             "answer": clean_response
         })
 
-
     except Exception as e:
-        print("ERROR:", e)
-        await message.channel.send("Something went wrong.")
+        # 1) Log full traceback to journalctl
+        logging.exception("Error handling Discord message:")
+        # 2) Notify in Discord that you logged it
+        await message.channel.send("Something went wrong. I've logged the error.")
 
 client.run(discord_token)
