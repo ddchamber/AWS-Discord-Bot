@@ -270,5 +270,7 @@ Give the user the single BEST response so they have clear direction, for example
         logging.exception("Error handling Discord message:")
         # 2) Notify in Discord that you logged it
         await message.channel.send("Something went wrong. I've logged the error.")
+        # journalctl -u discordbot -f  (in terminal to see logs)
+
 
 client.run(discord_token)
